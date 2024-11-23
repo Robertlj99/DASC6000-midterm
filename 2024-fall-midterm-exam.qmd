@@ -1,0 +1,164 @@
+---
+title: "DASC 600 Midterm Exam"
+author: "Robert Johnson"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+number-sections: true
+number-depth: 3
+format:
+  html:
+    toc: true
+    toc-location: right
+    number-sections: true
+    number-depth: 3
+    html-math-method: katex
+    embed-resources: true
+    self-contained: true
+# bibliography: dasc-6000.bib 
+# csl: ieee-with-url.csl
+# linkcolor: red
+# urlcolor: blue
+# link-citations: yes
+# header-includes:
+#   - \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+# Instructions {.unnumbered}
+
+Please show all your work. Simply providing the final answer is treated as no response. If you do not use R or Python notebooks, it is okay. Please preserve the document structure if you choose to use Microsoft Word or something else. Please number your responses to match with the corresponding questions.
+
+**Please submit your response as a self-contained HTML or PDF document**.
+
+The exam has five questions, each worth twenty points. It lasts two hours, which gives an average of twenty-four minutes to answer a question.
+
+The exam is from 1 pm to 3 pm EST. You will have ten minutes to upload your answer to Canvas. If you do not upload your response by 3:10 pm, it is considered a no-response.
+
+
+# Set Theory
+
+Prove the following set identity using a mathematical proof. For example, you may use algebraic manipulation, Venn diagrams, or *element-chasing* proof techniques (i.e., showing that same elements exist on the left hand side and right hand side of the identity).
+
+
+For any sets $A$, $B$, and $C$:
+
+$$
+A \cap(B \cup C) = (A \cap B) \cup(A \cap C)
+$$
+Let x be an arbitrary element, lets show that if $x \in A \cap (B \cup C)$ then $x \in (A\cap B) \cup (A \cap C)$ and vice-versa
+
+1. Assume that $x \in A \cap (B \cup C)$, then by definition of intersection $x \in A$ and $x \in B \cup C$
+- Since $x \in B \cup C$ it can be in either or both, let us consider each possibility
+- If $x \in B$ then $x \in A$ and $x \in B$ so $x \in A \cap B$
+- If $x \in C$ then $x \in A$ and $x \in C$ so $x \in A \cap C$
+- In either case $x \in (A \cap B) \cup (A \cap C)$
+
+2. Assume that $x \in (A \cap B) \cup (A \cap C)$
+- Since $x \in A \cap B$ or $x \in A \cap C$ we can consider each possibility
+- If $x \in A \cap B$ then $x \in A$ and $x \in B$
+- If $x \in A \cap C$ then $x \in A$ and $x \in C$
+- In either case, $x \in A$ and further, if $x \in B$ (case 1) or $x \in C$ (case 2) we get in both cases $x \in B \cup C$, thus when we combine both we get $x \in A \cap (B \cup C)$
+
+# Combinatorics
+
+A password consists of seven characters, where each character can be any letter of the alphabet (26 choices) or any digit (10 choices) subject to the following constraint. The password must contain *at least one letter* and *at least one digit*. How many possible passwords can be created under these constraints?
+
+Without any restrictions there are $36^7$ possible passwords, since there must be at least one letter and one digit we have to subtract out all passwords that do not meet these criteria. There are $10^7$ passwords that contain only numbers and $26^7$ passwords that contain only letters. Therefore the total number of viable passwords for this problem is $36^7 - 26^7 - 10^7$
+
+```{r}
+x <- 36^7
+y <- 26^7
+z <- 10^7
+print(x - y - z)
+```
+
+
+# The Law of Total Probability and Bayes Theorem
+
+A factory produces three types of mobile phones $M_1$, $M_2$, and $M_3$, which make up 50%, 30%, and 20% of the total production, respectively. The probability that a mobile phone of each type is defective is 5% for $M_1$, 7% for $M_2$, and 9% for $M_3$.
+
+(a) [5 points] Using the **Law of Total Probability**, compute the probability that a randomly selected mobile phone from the factory's production is defective.
+
+The law of total probability tells us that the probability for the given problem is,
+$$P(D) = P(D|M_1) \cdot P(M_1) + P(D|M_2) \cdot P(M_2) + P(D|M_3) \cdot P(M_3)$$
+```{r}
+x <- 0.05 * 0.5
+y <- 0.07 * 0.3
+z <- 0.09 * 0.2
+print(paste("P(D) = ", x + y + z))
+```
+
+(b) [5 points] Using the **Bayes' Theorem** and given that a randomly selected mobile phone is defective, compute the probability that it is an $M_1$ type mobile phone.
+
+To find $P(M_1|D)$ we can use Bayes theorem which states
+$$P(M_1|D) = \frac{P(D|M_1) \cdot P(M_1)}{P(D)}$$
+```{r}
+x <- 0.05 * 0.5
+y <- 0.064
+print(paste("P(M1|D) = ", x/y))
+```
+
+# Discrete Random Variables
+
+A six-sided die is rolled twice. Let the discrete random variable $X$ represent the sum of the numbers obtained from the two rolls.
+
+(a) [2 points] What is the *support* of $X$?
+
+- The sum can range from the smallest possible values (1+1=2) to the highest (6+6=12) with every number in between therefore the support of x is $\{2,3,4,5,6,7,8,9,10,11,12\}$
+
+(b) [3 points] Compute the **Probability Mass Function** (PMF) of $X$.
+```{r}
+x <- 2:12
+pmf <-  c(1/36, 1/18, 1/12, 1/9, 5/36, 1/6, 5/36, 1/9, 1/12, 1/18, 1/36)
+barplot(pmf, names.arg = x, main = "PMF of X", xlab = "X", ylab = "Probability", col = "lightgreen")
+```
+(c) [2 points] Verify that the probabilities you calculated in (b) form valid PMF for $X$.
+```{r}
+check <- sum(pmf)
+if (check == 1) {
+  print("Valid PMF")
+} else {
+  print("Not a valid PMF")
+}
+```
+(d) [3 points] Find the probability that the sum $X$ is greater than $8$. That is, $\mathbb{P}(X>8)$.
+```{r}
+x_over_8 <- c(1/9, 1/12, 1/18, 1/36)
+prob <- sum(x_over_8)
+print(paste("Probability that X is greater than 8 =", prob))
+```
+
+# Continuous Random Variables
+
+Let $X$ be a continuous random variable with the following probability density function (PDF):
+
+$$
+f(x)= \begin{cases}k x^2, & \text { if } 0 \leq x \leq 2 \\ 0, & \text { otherwise }\end{cases}
+$$
+
+(a) [4 points] Find the value of $k$ that makes $f(x)$ a valid PDF.
+```{r}
+a <- 0
+b <- 2
+i <- function(x) {x^2}
+i_value <- integrate(i, a, b)$value
+k <- 1 / i_value
+print(paste("PDF is valid when k =", k))
+```
+(b) [3 points] Calculate the probability that $X$ takes a value between 1 and $2$. That is, $\mathbb{P}(1 \leq$ $X \leq 2$ ).
+```{r}
+lower <- 1
+upper <- 2
+i <- function(x) {k * x^2}
+p <- integrate(i, lower, upper)$value
+print(paste("Probability that X is between 1 and 2 =", p))
+```
+(c) $[3$ points] Find the expected value $\mathbb{E}[X]$ of $X$.
+```{r}
+i <- function(x) {x * k * x^2} #x * f(x)
+ev <- integrate(i, a, b)$value
+print(paste("Expected value (E[X]) =", ev))
+```
+
